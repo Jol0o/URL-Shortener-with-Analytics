@@ -1,12 +1,10 @@
-import { clerkMiddleware, createRouteMatcher, getAuth } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 const isProtectedRoute = createRouteMatcher(['/chat(.*)', "/"]);
 
 export default clerkMiddleware(async (auth, req) => {
-    // console.log('Middleware executed for:', req.url);
-
-    const { userId } = await auth()
+    const { userId } = await auth();
 
     if (isProtectedRoute(req) && !userId) {
         const signInUrl = new URL('/auth/signin', req.url);
