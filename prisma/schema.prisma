@@ -3,39 +3,54 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id           String         @id @default(uuid())
-  username     String
-  email        String         @unique
-  avatar       String
-  userId       String         @unique    // Unique ID for the user
+  id            String         @id @default(uuid())
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  username      String
+  email         String         @unique
+  avatar        String
+  userId        String         @unique    // Unique ID for the user
   conversations Conversation[] @relation("UserConversations")
   messages      Message[]      @relation("UserMessages")
+
+  @@index([userId])
 }
 
 model Conversation {
   id          String    @id @default(uuid())
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
   name        String
   avatar      String
   lastMessage String
-  timestamp   DateTime @default(now())
+  timestamp   DateTime  @default(now())
 
-  // Many-to-many relationship with users
   users       User[]    @relation("UserConversations")
   messages    Message[]
+
+  @@index([timestamp])
 }
 
 model Message {
-  id            String   @id @default(uuid())
-  content       String
-  senderId      String
+  id             String       @id @default(uuid())
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  content        String
+  senderId       String
   conversationId String
-  timestamp     DateTime @default(now())
+  timestamp      DateTime     @default(now())
 
-  sender        User     @relation(fields: [senderId], references: [userId], name: "UserMessages")
-  conversation  Conversation @relation(fields: [conversationId], references: [id])
+  sender         User         @relation(fields: [senderId], references: [userId], name: "UserMessages")
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+
+  @@index([senderId])
+  @@index([conversationId])
+  @@index([timestamp])
 }
+

@@ -4,13 +4,13 @@ import { CommonInputError } from "@/lib/error/common.error";
 import { CommonInputErrorMessage, CommonUnhandleErrorMessage } from "@/lib/error/common";
 import { ConversationRepository } from "../repositories/ConversationRepository";
 import { ConversationService } from "../services/ConversationService";
+import { supabase } from "@/lib/supabase/supabase.client";
 
 const conversationRepository = new ConversationRepository();
 const conversationService = new ConversationService(conversationRepository);
 
 export const conversationfetchConversationByIdAction = async (id: string) => {
     try {
-
         if (!id) {
             throw new Error("userIds must be a non-empty string");
         }
@@ -20,6 +20,17 @@ export const conversationfetchConversationByIdAction = async (id: string) => {
         if (!data || typeof data !== "object") {
             throw new Error("Invalid response from createConversation. Expected an object.");
         }
+
+        supabase
+            .channel('message') // Change 'messages' to your table name
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'message' }, // Listen to INSERT, UPDATE, DELETE
+                (payload) => {
+                    console.log('Change received!', payload);
+                }
+            )
+            .subscribe();
 
         return { data };
     } catch (error) {

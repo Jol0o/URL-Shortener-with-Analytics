@@ -4,7 +4,6 @@ export class MessageService {
     constructor(private messageRepository: MessageRepository) { }
 
     async createMessage(content: string, senderId: string, conversationId: string) {
-        console.log("Creating message with content:", content, "senderId:", senderId, "conversationId:", conversationId);
         const message = await this.messageRepository.create({ content, senderId, conversationId });
 
         if (!message) {

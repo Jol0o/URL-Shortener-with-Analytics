@@ -3,7 +3,6 @@ import { MessageData } from '../../domain/entities/message';
 
 export class MessageRepository {
     async create(data: MessageData) {
-        console.log("Inserting message into database with data:", JSON.stringify(data, null, 2));
 
         if (!data.content || !data.senderId || !data.conversationId) {
             throw new Error("Missing required fields for creating a message.");
@@ -17,7 +16,6 @@ export class MessageRepository {
                     conversationId: data.conversationId,
                 },
             });
-            console.log("Message inserted successfully:", message);
             return message;
         } catch (error) {
             console.error("Error inserting message into database:", error);
