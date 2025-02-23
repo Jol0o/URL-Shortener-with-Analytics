@@ -53,7 +53,7 @@ export default function Sidebar({ data }: SidebarProps) {
             </div>
             <div className="flex-1 overflow-y-auto">
                 {data.map((conversation) => (
-                    <div key={conversation.id} onClick={() => router.push("/chat/conversation.id")} className="flex items-center p-4 hover:bg-gray-200 cursor-pointer">
+                    <div key={conversation.id} onClick={() => router.push(`/chat/${conversation.id}`)} className="flex items-center p-4 hover:bg-gray-200 cursor-pointer">
                         <Avatar className="h-10 w-10 mr-3">
                             <AvatarImage src={conversation.avatar} alt={conversation.name} />
                             <AvatarFallback>{conversation.name[0]}</AvatarFallback>
