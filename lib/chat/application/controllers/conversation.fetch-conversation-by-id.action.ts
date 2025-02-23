@@ -4,8 +4,6 @@ import { CommonInputError } from "@/lib/error/common.error";
 import { CommonInputErrorMessage, CommonUnhandleErrorMessage } from "@/lib/error/common";
 import { ConversationRepository } from "../repositories/ConversationRepository";
 import { ConversationService } from "../services/ConversationService";
-import { supabase } from "@/lib/supabase/supabase.client";
-
 const conversationRepository = new ConversationRepository();
 const conversationService = new ConversationService(conversationRepository);
 
