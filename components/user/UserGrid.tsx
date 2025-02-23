@@ -7,6 +7,9 @@ import { MessageSquare } from "lucide-react";
 import { User } from "@/lib/user/domain/entities/user";
 import { conversationCreateNewConversationAction } from "@/lib/chat/application/controllers/conversation.create-new-conversation.action";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { requestNotificationPermission, subscribeToPush } from "@/lib/notification/notification";
+import { registerServiceWorker } from "@/serviceWorker";
 
 
 interface UserGridProps {
@@ -31,6 +34,25 @@ export default function UserGrid({ data, id }: UserGridProps) {
             console.error("Error creating conversation:", err);
         }
     };
+
+    useEffect(() => {
+        const setupNotifications = async () => {
+            const permissionGranted = await requestNotificationPermission();
+            if (!permissionGranted) return;
+
+            const swRegistration = await registerServiceWorker();
+            if (!swRegistration) return;
+
+            const pushSubscription = await subscribeToPush(swRegistration);
+            if (pushSubscription) {
+                console.log("Push subscription successful:", pushSubscription);
+                // Save subscription to your backend
+                // Use it for sending notifications
+            }
+        };
+
+        setupNotifications();
+    }, []);
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

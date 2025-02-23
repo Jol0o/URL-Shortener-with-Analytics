@@ -21,17 +21,6 @@ export const conversationfetchConversationByIdAction = async (id: string) => {
             throw new Error("Invalid response from createConversation. Expected an object.");
         }
 
-        supabase
-            .channel('message') // Change 'messages' to your table name
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'message' }, // Listen to INSERT, UPDATE, DELETE
-                (payload) => {
-                    console.log('Change received!', payload);
-                }
-            )
-            .subscribe();
-
         return { data };
     } catch (error) {
         console.error("Error creating conversation:", error);

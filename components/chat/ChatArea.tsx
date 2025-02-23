@@ -6,6 +6,7 @@ import { Message } from "@/lib/message/domain/entities/message";
 import MessageInput from "./MessageInput";
 import { supabase } from "@/lib/supabase/supabase.client";
 import { conversationfetchConversationByIdAction } from "@/lib/chat/application/controllers/conversation.fetch-conversation-by-id.action";
+import { PushNotification } from "@/lib/shared/pushNotification";
 
 interface ChatAreaProps {
     data: {
@@ -43,9 +44,17 @@ export default function ChatArea({ data, conversationId }: ChatAreaProps) {
                     table: 'Message',
                 },
                 async () => {
-                    const { data } = await conversationfetchConversationByIdAction(conversationId);
-                    if (!data) return
-                    setMessages(data.messages);
+                    const { data: conversationData } = await conversationfetchConversationByIdAction(conversationId);
+                    if (!conversationData) return
+                    const lastMessage = conversationData.messages.slice(-1)[0];
+                    const otherUsers = conversationData.users.filter(user => user.userId !== data.userId);
+                    console.log(lastMessage, otherUsers)
+                    if (otherUsers.length > 0 && lastMessage && lastMessage.senderId !== data.userId && !document.hasFocus()) {
+                        otherUsers.forEach(user => {
+                            PushNotification(user.username, lastMessage.content);
+                        });
+                    }
+                    setMessages(conversationData.messages);
                 }
             )
             .subscribe();
