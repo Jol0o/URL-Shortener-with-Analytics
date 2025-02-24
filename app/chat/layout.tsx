@@ -2,7 +2,7 @@ import type React from "react"
 import Sidebar from "@/components/chat/Sidebar"
 import { currentUser } from "@clerk/nextjs/server";
 import { conversationfetchAllConversationAction } from "@/lib/chat/application/controllers/conversation.fetch-all-conversation.action";
-import { Conversation } from './../../lib/chat/domain/entities/chat';
+import { ConversationData } from './../../lib/chat/domain/entities/chat';
 
 export default async function ChatLayout({
     children,
@@ -10,7 +10,7 @@ export default async function ChatLayout({
     children: React.ReactNode
 }) {
     const user = await currentUser(); 
-    let conversation = [] as Conversation[];
+    let conversation = [] as ConversationData[];
     
     try {
         if (user) {
