@@ -18,6 +18,10 @@ export class ConversationService {
         return await this.conversationRepository.findById(id);
     }
 
+    async getLatestConversations(id: string) {
+        return await this.conversationRepository.findLatest(id);
+    }
+
     async findConversationByUserIds(userIds: string[]) {
         return await this.conversationRepository.findByUserIds(userIds);
     }

@@ -17,8 +17,10 @@ self.addEventListener('sync', (event) => {
 });
 
 self.addEventListener('push', (event) => {
+    const data = JSON.parse(event.data.text());
+
     const options = {
-        body: event.data?.text() || 'New message',
+        body: data.body || 'New message',
         icon: '/icon-192x192.png',
         badge: '/icon-192x192.png',
         vibrate: [100, 50, 100],
@@ -38,7 +40,7 @@ self.addEventListener('push', (event) => {
     };
 
     event.waitUntil(
-        self.registration.showNotification('New Message', options)
+        self.registration.showNotification(data.title, options)
     );
 });
 

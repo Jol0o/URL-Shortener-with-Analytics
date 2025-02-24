@@ -31,6 +31,20 @@ export class ConversationRepository {
         });
     }
 
+    async findLatest(id : string) {
+        return await prismaClient.conversation.findMany({
+            where: {
+                users: {
+                    some: {
+                        userId: id,
+                    },
+                },
+            },
+            orderBy: { updated_at: "desc" },
+            include: { users: true, messages: true },
+        });
+    }
+
     async find(userId :string) {
         return await prismaClient.conversation.findMany({
             where: {
