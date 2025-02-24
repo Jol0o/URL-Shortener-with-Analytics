@@ -8,33 +8,61 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(clients.claim());
 });
 
-self.addEventListener('push', function (event) {
-    console.log('Push event received:', event.data?.text());
-    const data = JSON.parse(event.data.text());
-    console.log('Push data:', data);
-    
+
+// this will handle the  background sync for offline messages
+self.addEventListener('sync', (event) => {
+    if (event.tag === 'messages-sync') {
+        event.waitUntil(syncMessages());
+    }
+});
+
+self.addEventListener('push', (event) => {
     const options = {
-        body: data.body || 'New message received',
-        icon: '/icon.png',  // Add your icon path
-        badge: '/badge.png',  // Add your badge path
+        body: event.data?.text() || 'New message',
+        icon: '/icon-192x192.png',
+        badge: '/icon-192x192.png',
         vibrate: [100, 50, 100],
-        requireInteraction: true, // Keep notification visible
         data: {
-            dateOfArrival: Date.now(),
-            primaryKey: 1
-        }
+            url: '/chat' // URL to open when notification is clicked
+        },
+        actions: [
+            {
+                action: 'open',
+                title: 'Open Chat'
+            },
+            {
+                action: 'close',
+                title: 'Dismiss'
+            }
+        ]
     };
 
     event.waitUntil(
-        self.registration.showNotification(data.title , options)
-        .then(() => console.log('Notification shown'))
-        .catch(error => console.error('Notification error:', error))
+        self.registration.showNotification('New Message', options)
     );
 });
 
-self.addEventListener('notificationclick', function (event) {
+
+self.addEventListener('notificationclick', (event) => {
     event.notification.close();
-    event.waitUntil(
-        clients.openWindow('/')
-    );
+
+    if (event.action === 'open' || !event.action) {
+        event.waitUntil(
+            clients.matchAll({ type: 'window', includeUncontrolled: true })
+                .then((clientList) => {
+                    if (clientList.length > 0) {
+                        return clientList[0].focus();
+                    }
+                    return clients.openWindow('/chat');
+                })
+        );
+    }
+});
+
+// Keep service worker alive
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'KEEP_ALIVE') {
+        // Respond to keep-alive ping
+        event.ports[0].postMessage('ALIVE');
+    }
 });
