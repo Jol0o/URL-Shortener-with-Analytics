@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://chat-application-git-main-jol0os-projects.vercel.app/
+
+# Sitemaps
+Sitemap: https://chat-application-git-main-jol0os-projects.vercel.app/sitemap.xml

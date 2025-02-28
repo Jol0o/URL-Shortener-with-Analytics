@@ -36,6 +36,9 @@ export const metadata: Metadata = {
     default: APP_DEFAULT_TITLE,
     template: APP_TITLE_TEMPLATE,
   },
+  alternates: {
+    canonical: APP_URL,
+  },
   description:
     "ChatSphere provides secure and real-time messaging with group chats, media sharing, and encrypted communication.",
   icons: {
@@ -66,12 +69,23 @@ export const metadata: Metadata = {
         alt: "ChatSphere Messaging App",
       },
     ],
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: "ChatSphere - Instant & Secure Messaging",
     description: APP_DESCRIPTION,
     images: APP_IMAGE,
+  },
+  robots: {
+    index: true, // Allow indexing
+    follow: true, // Allow following links
+    nocache: false, // Allow caching
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+    },
   },
   other: {
     'schema:software': JSON.stringify({
@@ -92,7 +106,25 @@ export const metadata: Metadata = {
       url: APP_URL,
       logo: APP_IMAGE,
       description: "A secure and real-time messaging platform for seamless communication.",
-    })
+    }),
+    'schema:breadcrumb': JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: APP_URL,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Chat",
+          item: `${APP_URL}/chat`,
+        },
+      ],
+    }),
   }
 };
 
